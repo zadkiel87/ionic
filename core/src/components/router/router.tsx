@@ -2,6 +2,7 @@ import { Component, ComponentInterface, Element, Event, EventEmitter, Listen, Me
 
 import { BackButtonEvent, Config, RouteChain, RouterDirection, RouterEventDetail } from '../../interface';
 import { debounce } from '../../utils/helpers';
+import { getOverlays } from '../../utils/overlays';
 
 import { ROUTER_INTENT_BACK, ROUTER_INTENT_FORWARD, ROUTER_INTENT_NONE } from './utils/constants';
 import { printRedirects, printRoutes } from './utils/debug';
@@ -74,10 +75,24 @@ export class Router implements ComponentInterface {
   }
 
   @Listen('window:popstate')
-  protected onPopState() {
+  protected async onPopState() {
     const direction = this.historyDirection();
     const path = this.getPath();
-    console.debug('[ion-router] URL changed -> update nav', path, direction);
+
+    /**
+     * If there are overlays open
+     * we want to prioritize closing
+     * those before we dismiss pages
+     */
+    const overlays = getOverlays(document);
+    if (overlays.length > 0 && this.previousPath != null) {
+      const topOverlay = overlays[overlays.length - 1];
+      
+      this.push(this.previousPath);
+      await topOverlay.dismiss();
+      return;
+    }
+
     return this.writeNavStateRoot(path, direction);
   }
 
