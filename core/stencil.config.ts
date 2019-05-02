@@ -63,12 +63,8 @@ export const config: Config = {
     //   type: 'dist-hydrate-script'
     // },
     {
-<<<<<<< HEAD
       type: 'experimental-dist-module',
       externalRuntime: true,
-=======
-      type: 'dist-hydrate-script'
->>>>>>> update dist-hydrate-script
     },
     {
       type: 'docs',
