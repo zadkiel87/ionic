@@ -29,7 +29,13 @@
     "importHelpers": true,
     "rootDir": "src",
     "strictPropertyInitialization": false,
-    "target": "es2015"
+    "target": "es2015",
+    "baseUrl": ".",
+    "paths": {
+      "@ionic/core/hydrate": [
+        "../core/hydrate"
+      ]
+    }
   },
   "exclude": ["node_modules", "src/schematics"],
   "files": ["src/index.ts"]

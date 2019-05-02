@@ -19,19 +19,13 @@ export class IonicServerModule {}
 // @dynamic
 export function hydrateIonicComponents(doc: any, appId: any) {
   return () => {
-    // hydrateDocumentSync(doc, {
-    //   clientSideHydrate: false,
-    //   collapseWhitespace: false,
-    //   collectAnchors: false,
-    //   collectComponents: false,
-    //   collectImgs: false,
-    //   collectScripts: false,
-    //   collectStylesheets: false
-    // });
-
-    const styleElms = doc.head.querySelectorAll('style[data-styles]');
-    for (let i = 0; i < styleElms.length; i++) {
-      styleElms[i].setAttribute('ng-transition', appId);
-    }
+    return hydrateDocument(doc, {
+      clientHydrateAnnotations: false
+    }).then(() => {
+      const styleElms = doc.head.querySelectorAll('style[data-styles]');
+      for (let i = 0; i < styleElms.length; i++) {
+        styleElms[i].setAttribute('ng-transition', appId);
+      }
+    });
   };
 }

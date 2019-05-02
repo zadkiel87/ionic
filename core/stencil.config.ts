@@ -59,24 +59,24 @@ export const config: Config = {
       type: 'dist',
       esmLoaderPath: '../loader'
     },
+    {
+      type: 'dist-hydrate-script'
+    },
     // {
-    //   type: 'dist-hydrate-script'
+    //   type: 'experimental-dist-module',
+    //   externalRuntime: true,
     // },
-    {
-      type: 'experimental-dist-module',
-      externalRuntime: true,
-    },
-    {
-      type: 'docs',
-      strict: true
-    },
-    {
-      type: 'docs-json',
-      file: '../docs/core.json'
-    },
-    apiSpecGenerator({
-      file: 'api.txt'
-    }),
+    // {
+    //   type: 'docs',
+    //   strict: true
+    // },
+    // {
+    //   type: 'docs-json',
+    //   file: '../docs/core.json'
+    // },
+    // apiSpecGenerator({
+    //   file: 'api.txt'
+    // }),
     // {
     //   type: 'stats',
     //   file: 'stats.json'
