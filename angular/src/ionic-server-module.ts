@@ -21,7 +21,18 @@ export function hydrateIonicComponents(doc: any, appId: any) {
   return () => {
     return hydrateDocument(doc, {
       clientHydrateAnnotations: false
-    }).then(() => {
+    })
+    .then(hydrateResults => {
+      hydrateResults.diagnostics.forEach(d => {
+        if (d.type === 'error') {
+          console.error(d.messageText);
+        } else if (d.type === 'debug') {
+          console.debug(d.messageText);
+        } else {
+          console.log(d.messageText);
+        }
+      });
+
       const styleElms = doc.head.querySelectorAll('style[data-styles]');
       for (let i = 0; i < styleElms.length; i++) {
         styleElms[i].setAttribute('ng-transition', appId);
