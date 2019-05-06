@@ -24,6 +24,8 @@ core/css/
 angular/css/
 $RECYCLE.BIN/
 
+angular/server/
+
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate

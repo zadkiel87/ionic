@@ -37,4 +37,3 @@ export { IonicRouteStrategy } from './util/ionic-router-reuse-strategy';
 
 // PACKAGE MODULE
 export { IonicModule } from './ionic-module';
-export { IonicServerModule } from './ionic-server-module';
