@@ -35,6 +35,7 @@
     "tslib": "^1.9.3"
   },
   "devDependencies": {
+    "@ionic-enterprise/angular-output-plugin": "0.0.1",
     "@stencil/core": "one",
     "@stencil/sass": "0.2.1",
     "@stencil/utils": "latest",

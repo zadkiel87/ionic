@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
 import { Component, ElementRef, ChangeDetectorRef, EventEmitter } from '@angular/core';
-import { Components } from '@ionic/core';
 import { proxyInputs, proxyMethods, proxyOutputs } from './proxies-utils';
 
+import { Components } from '@ionic/core'
 
 export declare interface IonApp extends Components.IonApp {}
 @Component({ selector: 'ion-app', changeDetection: 0, template: '<ng-content></ng-content>' })
