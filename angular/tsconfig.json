@@ -34,6 +34,9 @@
     "paths": {
       "@ionic/core/hydrate": [
         "../core/hydrate"
+      ],
+      "@ionic/core": [
+        "../core"
       ]
     }
   },

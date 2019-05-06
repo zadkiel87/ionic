@@ -279,7 +279,7 @@ export class IonHeader {
 }
 proxyInputs(IonHeader, ['mode', 'translucent']);
 
-export declare interface IonIcon {}
+export declare interface IonIcon extends Components.IonIcon {}
 @Component({ selector: 'ion-icon', changeDetection: 0, template: '<ng-content></ng-content>', inputs: ['ariaLabel', 'color', 'flipRtl', 'icon', 'ios', 'lazy', 'md', 'mode', 'name', 'size', 'src'] })
 export class IonIcon {
   protected el: HTMLElement;
