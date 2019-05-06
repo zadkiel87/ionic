@@ -5,44 +5,66 @@ const domino = require('domino');
 
 let prerenderCount = 0;
 
-async function prerender(dirPath, srcIndexFilePath) {
+async function prerenderPage(srcIndexFilePath) {
   const start = Date.now();
-  const srcHtml = fs.readFileSync(srcIndexFilePath, 'utf-8');
 
+  try {
+    await prerenderStatic(srcIndexFilePath);
+    await prerenderHydrated(srcIndexFilePath);
+    await prerenderDomino(srcIndexFilePath);
+    console.log(srcIndexFilePath, ` ${Date.now() - start}ms`);
+
+  } catch (e) {
+    console.error(`Failed:`, srcIndexFilePath, ` ${Date.now() - start}ms`);
+    throw e;
+  }
+}
+
+async function prerenderStatic(srcIndexFilePath) {
+  const dirPath = path.dirname(srcIndexFilePath);
+  const srcHtml = fs.readFileSync(srcIndexFilePath, 'utf-8');
   const staticFilePath = path.join(dirPath, 'prerender-static.html');
 
-  const staticResults = await hydrate.renderToString(srcHtml, {
+  const results = await hydrate.renderToString(srcHtml, {
     prettyHtml: true,
     removeScripts: true
   });
-  if (staticResults.diagnostics.length > 0) {
-    throw new Error('staticResults: ' + staticResults.diagnostics[0].messageText);
+  if (results.diagnostics.some(d => d.type === 'error')) {
+    throw new Error('staticResults:\n'  + results.diagnostics.map(d => d.messageText).join('\n'));
   }
-  fs.writeFileSync(staticFilePath, staticResults.html);
+  fs.writeFileSync(staticFilePath, results.html);
 
+  const dstIndexFilePath = path.join(dirPath, 'prerender.html');
+  const prerenderIndexHtml = buildPrerenderIndexHtml(results.title);
+  fs.writeFileSync(dstIndexFilePath, prerenderIndexHtml);
+  prerenderCount++;
+}
+
+async function prerenderHydrated(srcIndexFilePath) {
+  const dirPath = path.dirname(srcIndexFilePath);
+  const srcHtml = fs.readFileSync(srcIndexFilePath, 'utf-8');
   const hydratedFilePath = path.join(dirPath, 'prerender-hydrated.html');
-  const hydrateResults = await hydrate.renderToString(srcHtml, {
+  const results = await hydrate.renderToString(srcHtml, {
     prettyHtml: true
   });
-  if (hydrateResults.diagnostics.length > 0) {
-    throw new Error('hydrateResults: ' + hydrateResults.diagnostics[0].messageText);
+  if (results.diagnostics.some(d => d.type === 'error')) {
+    throw new Error('hydrateResults:\n' + staticResults.diagnostics.map(d => d.messageText).join('\n'));
   }
-  fs.writeFileSync(hydratedFilePath, hydrateResults.html);
+  fs.writeFileSync(hydratedFilePath, results.html);
+  prerenderCount++;
+}
 
+async function prerenderDomino(srcIndexFilePath) {
+  const dirPath = path.dirname(srcIndexFilePath);
+  const srcHtml = fs.readFileSync(srcIndexFilePath, 'utf-8');
   const dominoFilePath = path.join(dirPath, 'prerender-domino.html');
   const dominoDoc = domino.createDocument(srcHtml, true);
-  const dominoResults = await hydrate.hydrateDocument(dominoDoc);
-  if (dominoResults.diagnostics.length > 0) {
-    throw new Error('dominoResults: ' + dominoResults.diagnostics[0].messageText);
+  const results = await hydrate.hydrateDocument(dominoDoc);
+  if (results.diagnostics.some(d => d.type === 'error')) {
+    throw new Error('dominoResults:\n' + staticResults.diagnostics.map(d => d.messageText).join('\n'));
   }
   const dominoHtml = dominoDoc.documentElement.outerHTML;
   fs.writeFileSync(dominoFilePath, dominoHtml);
-
-  const dstIndexFilePath = path.join(dirPath, 'prerender.html');
-  const prerenderIndexHtml = buildPrerenderIndexHtml('staticResults.title');
-  fs.writeFileSync(dstIndexFilePath, prerenderIndexHtml);
-
-  console.log(dirPath, `${Date.now() - start}ms`);
   prerenderCount++;
 }
 
@@ -103,23 +125,19 @@ function buildPrerenderIndexHtml(title) {
 `;
 }
 
-async function prerenderDir(dirPath, filterText) {
+async function prerenderDir(dirPath) {
   const items = fs.readdirSync(dirPath);
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
+  for (const item of items) {
     const itemPath = path.join(dirPath, item);
     const stat = fs.statSync(itemPath);
 
     if (stat.isDirectory() && item !== 'spec') {
-      await prerenderDir(itemPath, filterText);
+      await prerenderDir(itemPath);
 
     } else {
-      if (typeof filterText === 'string' && !dirPath.includes(filterText)) {
-        return;
-      }
       if (item === 'index.html' && dirPath.includes('test')) {
-        await prerender(dirPath, itemPath);
+        await prerenderPage(itemPath);
       }
     }
   }
@@ -128,12 +146,31 @@ async function prerenderDir(dirPath, filterText) {
 async function run() {
   const start = Date.now();
   try {
-    await prerenderDir(path.join(__dirname, '..', '..', 'src', 'components'), process.argv[2]);
+
+    let p = process.argv[2];
+    if (p) {
+      const s = fs.statSync(p);
+      if (s.isDirectory()) {
+        await prerenderDir(p)
+      } else {
+        await prerenderPage(p);
+      }
+
+    } else {
+      p = path.join(__dirname, '..', '..', 'src', 'components');
+      await prerenderDir(p);
+    }
+
   } catch (e) {
     console.error(e);
   }
 
-  console.log(`prerendered: ${prerenderCount}`);
-  console.log(`time: ${Date.now() - start}ms`);
+  const duration = Date.now() - start;
+  console.log(`time: ${duration}ms`);
+  if (prerenderCount > 1) {
+    console.log(`prerendered: ${prerenderCount}`);
+    console.log(`average: ${Math.round(duration / prerenderCount)}ms`);
+  }
 }
+
 run();
