@@ -60,7 +60,7 @@ import { NavigationPage3Component } from './navigation-page3/navigation-page3.co
     NavigationPage3Component
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
