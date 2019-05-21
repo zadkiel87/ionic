@@ -3,7 +3,6 @@ import { Attribute, ChangeDetectorRef, ComponentFactoryResolver, ComponentRef, D
 import { ActivatedRoute, ChildrenOutletContexts, OutletContext, PRIMARY_OUTLET, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
-import { Location } from '@angular/common';
 import { Config } from '../../providers/config';
 import { NavController } from '../../providers/nav-controller';
 
