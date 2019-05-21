@@ -3,6 +3,7 @@ import { Attribute, ChangeDetectorRef, ComponentFactoryResolver, ComponentRef, D
 import { ActivatedRoute, ChildrenOutletContexts, OutletContext, PRIMARY_OUTLET, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
+
 import { Config } from '../../providers/config';
 import { NavController } from '../../providers/nav-controller';
 
@@ -59,7 +60,7 @@ export class IonRouterOutlet implements OnDestroy, OnInit {
     private changeDetector: ChangeDetectorRef,
     private config: Config,
     private navCtrl: NavController,
-    commonLocation: Location,
+    private commonLocation: Location,
     elementRef: ElementRef,
     private router: Router,
     zone: NgZone,
@@ -129,18 +130,19 @@ export class IonRouterOutlet implements OnDestroy, OnInit {
     (this.router as any).hooks.beforePreactivation = () => {
       const overlays = document.querySelectorAll('ion-alert, ion-modal, ion-popover, ion-action-sheet');
       if (overlays.length >= 1) {
-        const topOverlay = overlays[overlays.length - 1];      
-        (topOverlay as any).dismiss(); 
-        
-        console.log('activated route',this.activatedRoute)
+        const topOverlay = overlays[overlays.length - 1];
+        (topOverlay as any).dismiss();
+
+        console.log('activated route', this.activatedRoute);
         const currentUrlTree = this.router.createUrlTree([], this.activatedRoute as any);
         const currentUrl = currentUrlTree.toString();
-        this.commonLocation.go(currentUrl);         
-                
+        this.commonLocation.go(currentUrl);
+
         return throwError('cancelling navigation due to open overlay');
       }
+      // tslint:disable-next-line
       return of(true);
-    }
+    };
   }
 
   /**
