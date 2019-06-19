@@ -30,18 +30,17 @@
     "loader/"
   ],
   "dependencies": {
-    "ionicons": "4.5.9-1",
+    "ionicons": "4.5.10-0",
     "tslib": "^1.10.0"
   },
   "devDependencies": {
-    "@stencil/core": "1.0.2",
+    "@stencil/core": "1.0.6",
     "@stencil/sass": "latest",
     "@stencil/utils": "latest",
     "@types/jest": "24.0.13",
     "@types/node": "10.12.18",
     "@types/puppeteer": "1.12.4",
     "@types/swiper": "4.4.1",
-    "agadoo": "^1.0.0",
     "aws-sdk": "^2.320.0",
     "chromedriver": "^2.38.3",
     "clean-css-cli": "^4.1.11",
@@ -50,9 +49,10 @@
     "jest-cli": "24.8.0",
     "np": "^3.0.4",
     "pixelmatch": "4.0.2",
-    "puppeteer": "1.14.0",
+    "puppeteer": "1.17.0",
     "rollup": "1.1.2",
     "rollup-plugin-node-resolve": "4.0.0",
+    "rollup-plugin-virtual": "^1.0.1",
     "sass": "^1.20.1",
     "stylelint": "9.10.1",
     "stylelint-order": "2.0.0",
@@ -87,7 +87,7 @@
     "test.screenshot": "stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/dev.js",
     "test.screenshot.ci": "stencil test --e2e --screenshot --screenshot-connector=scripts/screenshot/ci.js --ci",
     "test.watch": "jest --watch --no-cache",
-    "test.treeshake": "agadoo dist/collection/index.js",
+    "test.treeshake": "node scripts/treeshaking.js dist/index.mjs",
     "validate": "npm run lint && npm run test && npm run build && npm run test.treeshake"
   },
   "author": "Ionic Team",
